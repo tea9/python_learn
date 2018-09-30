@@ -1,4 +1,5 @@
 #coding=utf-8
+# 数据库
 
 import requests
 import json
@@ -23,11 +24,21 @@ def lesson():
 	name_long = len(data['course']['result'])
 
 	for i in range(name_long):
-		print data['course']['result'][i]['courseName']
-		sql = "insert into lessons (lesson_name,lesson_own) values ('%s','%s')"%(data['result'])
+		# print data['course']['result'][i]['courseName']
+		# sql = "insert into lessons (lesson_name,lesson_own) values ('%s','%s')"%(data['result'])
+		sql = "insert into lessons (lesson_name,lesson_own) values ('%s','%s')"%(data['course']['result'][i]['courseName'].encode('utf-8'),data['course']['result'][i]['producerName'].encode('utf-8'))
 		cus.execute(sql)
+		conn.commit()
+		# print cus.rowcount
+		sql_select = 'select * from lessons'
+		cus.execute(sql_select)
+		# print cus.fetchone()
+		for e in cus.fetchall():
+			print e[1]
 
-conn = MySQLdb.connect
+
+conn = MySQLdb.connect(host = '127.0.0.1',port = 3306,user = 'root',passwd='root',db='ichunqiu',charset='utf8' )
+cus = conn.cursor()
 
 if __name__ == '__main__':
 	url = url_start
@@ -35,25 +46,7 @@ if __name__ == '__main__':
 	# 	url = url_start+str(i)
 		payload = {"pageIndex":i}
 		lesson()
-		print "----"
+		# print "----"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+cus.close()
+conn.close()
